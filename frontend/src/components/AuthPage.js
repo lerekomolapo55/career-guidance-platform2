@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
+import { authAPI } from './api';
 import './AuthPage.css';
-
-const API_BASE_URL = 'http://localhost:5000/api';
 
 const AuthPage = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -91,40 +90,39 @@ const AuthPage = ({ onLogin }) => {
     }
 
     try {
-      let endpoint = '';
-      let payload = {};
+      let response;
+      let data;
 
       if (isLogin) {
-        endpoint = '/auth/login';
-        payload = {
+        response = await authAPI.login({
           email: formData.email,
           password: formData.password
-        };
+        });
+        data = response;
       } else {
         switch(formData.userType) {
           case 'student':
-            endpoint = '/auth/register/student';
-            payload = {
+            response = await authAPI.registerStudent({
               name: formData.name,
               email: formData.email,
               password: formData.password,
               studentType: formData.studentType
-            };
+            });
+            data = response;
             break;
           case 'company':
-            endpoint = '/auth/register/company';
-            payload = {
+            response = await authAPI.registerCompany({
               companyName: formData.companyName || formData.name,
               email: formData.email,
               password: formData.password,
               industry: formData.industry || 'General',
               location: formData.location || 'Lesotho',
               description: formData.description || ''
-            };
+            });
+            data = response;
             break;
           case 'institution':
-            endpoint = '/auth/register/institution';
-            payload = {
+            response = await authAPI.registerInstitution({
               institutionName: formData.institutionName || formData.name,
               email: formData.email,
               password: formData.password,
@@ -132,60 +130,47 @@ const AuthPage = ({ onLogin }) => {
               type: formData.type || 'public',
               established: formData.established || '',
               description: formData.description || ''
-            };
+            });
+            data = response;
             break;
           case 'admin':
-            endpoint = '/auth/register/admin';
-            payload = {
+            response = await authAPI.registerAdmin({
               name: formData.name,
               email: formData.email,
               password: formData.password
-            };
+            });
+            data = response;
             break;
           default:
             throw new Error('Invalid user type');
         }
       }
 
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        if (data.token && data.user) {
-          onLogin(data.user, data.token);
-        } else {
-          setError(data.message || 'Registration successful! You can now login.');
-          setIsLogin(true);
-          setFormData({
-            name: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-            userType: '',
-            studentType: '',
-            institutionName: '',
-            companyName: '',
-            industry: '',
-            location: '',
-            type: 'public',
-            established: '',
-            description: ''
-          });
-          setSelectedPortal('');
-        }
+      if (data.token && data.user) {
+        onLogin(data.user, data.token);
       } else {
-        setError(data.message || `Authentication failed: ${response.status}`);
+        setError(data.message || 'Registration successful! You can now login.');
+        setIsLogin(true);
+        setFormData({
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+          userType: '',
+          studentType: '',
+          institutionName: '',
+          companyName: '',
+          industry: '',
+          location: '',
+          type: 'public',
+          established: '',
+          description: ''
+        });
+        setSelectedPortal('');
       }
     } catch (error) {
       console.error('Authentication error:', error);
-      setError('Network error. Please check if the backend server is running.');
+      setError(error.message || 'Network error. Please check if the backend server is running.');
     } finally {
       setLoading(false);
     }
