@@ -2,9 +2,10 @@
   "name": "career-guidance-frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://lerekomolapo55.github.io/career-guidance-platform3",
+  "homepage": "https://lerekomolapo55.github.io/career-guidance-platform2",
   "repository": {
-    "type": "git"
+    "type": "git",
+    "url": "https://github.com/lerekomolapo55/career-guidance-platform2.git"
   },
   "dependencies": {
     "axios": "^1.3.0",
