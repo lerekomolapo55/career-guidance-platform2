@@ -1,7 +1,7 @@
 {
   "name": "career-guidance-frontend",
   "version": "1.0.0",
-  "description": "Career Guidance Platform Frontend",
+  "description": "Career Guidance Platform3 Frontend",
   "private": true,
   "dependencies": {
     "react": "^18.2.0",

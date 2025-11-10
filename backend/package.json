@@ -1,7 +1,7 @@
 {
   "name": "career-guidance-backend",
   "version": "1.0.0",
-  "description": "Backend for Career Guidance Platform",
+  "description": "Backend for Career Guidance Platform3",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
