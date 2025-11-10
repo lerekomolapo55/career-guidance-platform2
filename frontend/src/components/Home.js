@@ -88,11 +88,11 @@ const Home = ({ user }) => {
           <div className="stats-grid">
             <div className="stat-item">
               <div className="stat-number"></div>
-              <div className="stat-label">Courses Available</div>
+              <div className="stat-label">Courses </div>
             </div>
             <div className="stat-item">
               <div className="stat-number"></div>
-              <div className="stat-label">Institutions</div>
+              <div className="stat-label">Institutions </div>
             </div>
             <div className="stat-item">
               <div className="stat-number"></div>
@@ -100,7 +100,7 @@ const Home = ({ user }) => {
             </div>
             <div className="stat-item">
               <div className="stat-number"></div>
-              <div className="stat-label">Students Served</div>
+              <div className="stat-label">Students </div>
             </div>
           </div>
         </div>
