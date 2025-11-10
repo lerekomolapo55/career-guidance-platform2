@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Single Page Apps for GitHub Pages</title>
+    <script type="text/javascript">
+      // Single Page Apps for GitHub Pages
+      // https://github.com/rafgraph/spa-github-pages
+      // MIT License
+
+      var pathSegmentsToKeep = 1;
+      var l = window.location;
+
+      // If the script is running at the root of the repo, then use the
+      // base of the repo for the pathname. Otherwise, use the pathname of
+      // the current file.
+      var pathname = l.pathname.split('/')[1];
+
+      // If there are no path segments to keep, just redirect to the root.
+      if (pathSegmentsToKeep === 0) {
+        l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + '/');
+        return;
+      }
+
+      // Otherwise, replace the URL as appropriate.
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        '/' + pathname +
+        l.pathname.split('/').slice(-pathSegmentsToKeep).join('/') + '/' +
+        (l.search ? 'index.html' + l.search :
+          l.hash)
+      );
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
