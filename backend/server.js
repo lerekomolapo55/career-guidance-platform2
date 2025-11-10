@@ -80,24 +80,7 @@ try {
 
 // Authentication middleware
 const authenticateToken = (req, res, next) => {
-  const publicRoutes = [
-    '/api/auth/login',
-    '/api/auth/register',
-    '/api/universities',
-    '/api/companies',
-    '/api/courses',
-    '/api/admin/dashboard',
-    '/api/undergraduate/courses',
-    '/api/health',
-    '/api/test',
-    '/api/student/qualified-courses',
-    '/api/graduate/jobs',
-    '/api/jobs'
-  ];
-  
-  const isPublicRoute = publicRoutes.some(route => req.path.startsWith(route));
-  
-  if (isPublicRoute) {
+  if (req.path.startsWith('/api/auth') || (req.method === 'GET' && req.path.startsWith('/api/'))) {
     return next();
   }
 
