@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import { authAPI } from './api';
 import './Auth.css';
 
 const Register = ({ onRegister }) => {
@@ -36,38 +36,36 @@ const Register = ({ onRegister }) => {
     }
 
     try {
-      let endpoint = '';
-      let payload = {};
+      let response;
+      let user;
 
       if (formData.userType === 'student') {
-        endpoint = '/auth/register/student';
-        payload = {
+        response = await authAPI.registerStudent({
           name: formData.name,
           email: formData.email,
           password: formData.password,
           studentType: formData.studentType
-        };
+        });
+        user = response.user;
       } else if (formData.userType === 'company') {
-        endpoint = '/auth/register/company';
-        payload = {
+        response = await authAPI.registerCompany({
           companyName: formData.name,
           email: formData.email,
           password: formData.password,
           industry: 'Technology',
           location: 'Maseru'
-        };
+        });
+        user = response.user;
       }
 
-      const response = await axios.post(endpoint, payload);
-      
-      if (response.data.token) {
-        onRegister(response.data.user, response.data.token);
+      if (response.token) {
+        onRegister(user, response.token);
         navigate('/dashboard');
       } else {
         setError('Registration successful! Please check your email for verification.');
       }
     } catch (error) {
-      setError(error.response?.data?.message || 'Registration failed');
+      setError(error.message || 'Registration failed');
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import { authAPI } from './api';
 import './Auth.css';
 
 const Login = ({ onLogin }) => {
@@ -26,15 +26,15 @@ const Login = ({ onLogin }) => {
     setError('');
 
     try {
-      const response = await axios.post('/auth/login', {
+      const response = await authAPI.login({
         email: formData.email,
         password: formData.password
       });
       
-      onLogin(response.data.user, response.data.token);
+      onLogin(response.user, response.token);
       navigate('/dashboard');
     } catch (error) {
-      setError(error.response?.data?.message || 'Login failed');
+      setError(error.message || 'Login failed');
     } finally {
       setLoading(false);
     }
