@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import axios from 'axios';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -19,8 +18,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 import './App.css';
 
-axios.defaults.baseURL = 'http://localhost:5000/api';
-
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +30,6 @@ function App() {
       try {
         const userData = JSON.parse(savedUser);
         setUser(userData);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       } catch (error) {
         console.error('Error parsing saved user:', error);
         localStorage.removeItem('token');
@@ -47,14 +43,12 @@ function App() {
     setUser(userData);
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    delete axios.defaults.headers.common['Authorization'];
   };
 
   if (loading) {
