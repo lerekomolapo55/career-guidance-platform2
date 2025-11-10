@@ -87,7 +87,7 @@ const Home = ({ user }) => {
           <h2>Platform Overview</h2>
           <div className="stats-grid">
             <div className="stat-item">
-              <div className="stat-number">50+</div>
+              <div className="stat-number">8+</div>
               <div className="stat-label">Courses Available</div>
             </div>
             <div className="stat-item">
@@ -95,11 +95,11 @@ const Home = ({ user }) => {
               <div className="stat-label">Institutions</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">25+</div>
+              <div className="stat-number">10+</div>
               <div className="stat-label">Partner Companies</div>
             </div>
             <div className="stat-item">
-              <div className="stat-number">1000+</div>
+              <div className="stat-number">50+</div>
               <div className="stat-label">Students Served</div>
             </div>
           </div>

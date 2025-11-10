@@ -9,7 +9,8 @@ const getAuthHeaders = () => {
 };
 
 const api = {
-  fetch: async (url, options = {}) => {
+  fetch: async (url, options = {}, attempt = 0) => {
+    const maxRetries = 3;
     const response = await fetch(`${API_BASE_URL}${url}`, {
       ...options,
       headers: {
@@ -25,9 +26,15 @@ const api = {
       throw new Error('Authentication required');
     }
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Request failed');
+    if (!response.ok && response.status !== 401) {
+      if (attempt < maxRetries) {
+        const delay = Math.pow(2, attempt) * 1000; // Exponential backoff: 1s, 2s, 4s
+        console.log(`Request failed with status ${response.status}. Retrying in ${delay}ms... (attempt ${attempt + 1}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return api.fetch(url, options, attempt + 1);
+      }
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || `Request failed with status ${response.status}`);
     }
 
     return response.json();
