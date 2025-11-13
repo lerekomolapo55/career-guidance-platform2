@@ -12,6 +12,7 @@ const AdminDashboard = ({ user }) => {
   const [showAddInstitution, setShowAddInstitution] = useState(false);
   const [showAddCompany, setShowAddCompany] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [processingId, setProcessingId] = useState(null);
 
   const [institutionForm, setInstitutionForm] = useState({
     name: '',
@@ -127,32 +128,83 @@ const AdminDashboard = ({ user }) => {
 
   const handleApprove = async (id, type) => {
     try {
-      await api.put(`/admin/companies/${id}/approve`);
-      alert(`${type} approved successfully!`);
-      fetchAdminData();
+      setProcessingId(id);
+      let endpoint = '';
+      
+      if (type === 'company' || type === 'Company') {
+        endpoint = `/admin/companies/${id}/approve`;
+      } else if (type === 'institution' || type === 'Institution') {
+        endpoint = `/admin/institutions/${id}/approve`;
+      } else {
+        const approval = pendingApprovals.find(item => item.id === id);
+        if (approval) {
+          if (approval.type === 'company') {
+            endpoint = `/admin/companies/${id}/approve`;
+          } else if (approval.type === 'institution') {
+            endpoint = `/admin/institutions/${id}/approve`;
+          }
+        }
+      }
+
+      if (endpoint) {
+        await api.put(endpoint);
+        alert(`${type} approved successfully!`);
+        fetchAdminData();
+      } else {
+        alert('Error: Could not determine approval type');
+      }
     } catch (error) {
       alert(`Error approving ${type}: ` + error.message);
+    } finally {
+      setProcessingId(null);
     }
   };
 
-  const handleSuspend = async (id, type) => {
+  const handleReject = async (id, type) => {
     try {
-      await api.put(`/admin/companies/${id}/suspend`);
-      alert(`${type} suspended successfully!`);
-      fetchAdminData();
+      setProcessingId(id);
+      let endpoint = '';
+      
+      if (type === 'company' || type === 'Company') {
+        endpoint = `/admin/companies/${id}/suspend`;
+      } else if (type === 'institution' || type === 'Institution') {
+        endpoint = `/admin/institutions/${id}/suspend`;
+      } else {
+        const approval = pendingApprovals.find(item => item.id === id);
+        if (approval) {
+          if (approval.type === 'company') {
+            endpoint = `/admin/companies/${id}/suspend`;
+          } else if (approval.type === 'institution') {
+            endpoint = `/admin/institutions/${id}/suspend`;
+          }
+        }
+      }
+
+      if (endpoint) {
+        await api.put(endpoint);
+        alert(`${type} rejected successfully!`);
+        fetchAdminData();
+      } else {
+        alert('Error: Could not determine rejection type');
+      }
     } catch (error) {
-      alert(`Error suspending ${type}: ` + error.message);
+      alert(`Error rejecting ${type}: ` + error.message);
+    } finally {
+      setProcessingId(null);
     }
   };
 
   const handleDeleteInstitution = async (id) => {
     if (window.confirm('Are you sure you want to delete this institution?')) {
       try {
+        setProcessingId(id);
         await api.delete(`/admin/institutions/${id}`);
         alert('Institution deleted successfully!');
         fetchAdminData();
       } catch (error) {
         alert('Error deleting institution: ' + error.message);
+      } finally {
+        setProcessingId(null);
       }
     }
   };
@@ -160,11 +212,14 @@ const AdminDashboard = ({ user }) => {
   const handleDeleteCompany = async (id) => {
     if (window.confirm('Are you sure you want to delete this company?')) {
       try {
+        setProcessingId(id);
         await api.delete(`/admin/companies/${id}`);
         alert('Company deleted successfully!');
         fetchAdminData();
       } catch (error) {
         alert('Error deleting company: ' + error.message);
+      } finally {
+        setProcessingId(null);
       }
     }
   };
@@ -172,13 +227,14 @@ const AdminDashboard = ({ user }) => {
   const handleDeleteUser = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        // Note: You'll need to add a DELETE user endpoint in your backend
-        alert('User deletion functionality would be implemented here');
-        // For now, just remove from local state
-        setUsers(users.filter(user => user.id !== userId));
+        setProcessingId(userId);
+        await api.delete(`/admin/users/${userId}`);
         alert('User deleted successfully!');
+        fetchAdminData();
       } catch (error) {
         alert('Error deleting user: ' + error.message);
+      } finally {
+        setProcessingId(null);
       }
     }
   };
@@ -322,7 +378,6 @@ const AdminDashboard = ({ user }) => {
           </div>
         )}
 
-        {/* Other tabs remain the same as in the previous implementation */}
         {activeTab === 'institutions' && (
           <div className="institutions-content">
             <div className="section-header">
@@ -465,13 +520,31 @@ const AdminDashboard = ({ user }) => {
                         <td>{institution.contact?.email || 'N/A'}</td>
                         <td>{getStatusBadge(institution.isActive ? 'active' : 'inactive')}</td>
                         <td>
-                          <button className="btn btn-secondary btn-sm">Edit</button>
-                          <button 
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleDeleteInstitution(institution.id)}
-                          >
-                            Delete
-                          </button>
+                          <div className="action-buttons">
+                            {!institution.isActive && (
+                              <button 
+                                className="btn btn-primary btn-sm"
+                                onClick={() => handleApprove(institution.id, 'Institution')}
+                                disabled={processingId === institution.id}
+                              >
+                                {processingId === institution.id ? 'Processing...' : 'Approve'}
+                              </button>
+                            )}
+                            <button 
+                              className="btn btn-danger btn-sm"
+                              onClick={() => handleReject(institution.id, 'Institution')}
+                              disabled={processingId === institution.id}
+                            >
+                              {processingId === institution.id ? 'Processing...' : 'Reject'}
+                            </button>
+                            <button 
+                              className="btn btn-danger btn-sm"
+                              onClick={() => handleDeleteInstitution(institution.id)}
+                              disabled={processingId === institution.id}
+                            >
+                              {processingId === institution.id ? 'Processing...' : 'Delete'}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -614,26 +687,31 @@ const AdminDashboard = ({ user }) => {
                           {getStatusBadge(company.isApproved ? 'approved' : 'pending')}
                         </td>
                         <td>
-                          {!company.isApproved && (
+                          <div className="action-buttons">
+                            {!company.isApproved && (
+                              <button 
+                                className="btn btn-primary btn-sm"
+                                onClick={() => handleApprove(company.id, 'Company')}
+                                disabled={processingId === company.id}
+                              >
+                                {processingId === company.id ? 'Processing...' : 'Approve'}
+                              </button>
+                            )}
                             <button 
-                              className="btn btn-primary btn-sm"
-                              onClick={() => handleApprove(company.id, 'Company')}
+                              className="btn btn-danger btn-sm"
+                              onClick={() => handleReject(company.id, 'Company')}
+                              disabled={processingId === company.id}
                             >
-                              Approve
+                              {processingId === company.id ? 'Processing...' : 'Reject'}
                             </button>
-                          )}
-                          <button 
-                            className="btn btn-warning btn-sm"
-                            onClick={() => handleSuspend(company.id, 'Company')}
-                          >
-                            {company.isApproved ? 'Suspend' : 'Reject'}
-                          </button>
-                          <button 
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleDeleteCompany(company.id)}
-                          >
-                            Delete
-                          </button>
+                            <button 
+                              className="btn btn-danger btn-sm"
+                              onClick={() => handleDeleteCompany(company.id)}
+                              disabled={processingId === company.id}
+                            >
+                              {processingId === company.id ? 'Processing...' : 'Delete'}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -689,13 +767,16 @@ const AdminDashboard = ({ user }) => {
                         </td>
                         <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                         <td>
-                          <button className="btn btn-secondary btn-sm">View</button>
-                          <button 
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleDeleteUser(user.id)}
-                          >
-                            Delete
-                          </button>
+                          <div className="action-buttons">
+                            <button className="btn btn-secondary btn-sm">View</button>
+                            <button 
+                              className="btn btn-danger btn-sm"
+                              onClick={() => handleDeleteUser(user.id)}
+                              disabled={processingId === user.id}
+                            >
+                              {processingId === user.id ? 'Processing...' : 'Delete'}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -776,18 +857,22 @@ const AdminDashboard = ({ user }) => {
                         <td>{approval.industry || approval.type || 'N/A'}</td>
                         <td>{new Date(approval.createdAt).toLocaleDateString()}</td>
                         <td>
-                          <button 
-                            className="btn btn-primary btn-sm"
-                            onClick={() => handleApprove(approval.id, approval.userType || (approval.companyName ? 'Company' : 'Institution'))}
-                          >
-                            Approve
-                          </button>
-                          <button 
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleSuspend(approval.id, approval.userType || (approval.companyName ? 'Company' : 'Institution'))}
-                          >
-                            Reject
-                          </button>
+                          <div className="action-buttons">
+                            <button 
+                              className="btn btn-primary btn-sm"
+                              onClick={() => handleApprove(approval.id, approval.type || (approval.companyName ? 'Company' : 'Institution'))}
+                              disabled={processingId === approval.id}
+                            >
+                              {processingId === approval.id ? 'Processing...' : 'Approve'}
+                            </button>
+                            <button 
+                              className="btn btn-danger btn-sm"
+                              onClick={() => handleReject(approval.id, approval.type || (approval.companyName ? 'Company' : 'Institution'))}
+                              disabled={processingId === approval.id}
+                            >
+                              {processingId === approval.id ? 'Processing...' : 'Reject'}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
