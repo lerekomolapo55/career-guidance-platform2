@@ -88,7 +88,7 @@ const Home = ({ user }) => {
           <div className="stats-grid">
             <div className="stat-item">
               <div className="stat-number"></div>
-              <div className="stat-label">Courses </div>
+              <div className="stat-label">courses</div>
             </div>
             <div className="stat-item">
               <div className="stat-number"></div>

@@ -4,7 +4,7 @@
 }
 
 .dashboard-header {
-  background: linear-gradient(135deg, #4a90e2 0%, #4a90e2 100%);
+  background: linear-gradient(135deg, #4a90e2 0%, #1e2833 100%);
   color: white;
   padding: 2rem;
   text-align: center;
@@ -394,7 +394,7 @@
   gap: 1rem;
 }
 
-.status-btn, .delete-btn {
+.view-btn, .status-btn, .delete-btn {
   padding: 0.8rem 1.5rem;
   border: none;
   border-radius: 8px;
@@ -403,6 +403,16 @@
   font-weight: 600;
   transition: all 0.3s ease;
   flex: 1;
+}
+
+.view-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.view-btn:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
 }
 
 .status-btn {
@@ -470,6 +480,13 @@
   font-weight: 600;
 }
 
+.applicants-subtitle {
+  color: #666;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
 .applicants-list {
   display: grid;
   gap: 1.5rem;
@@ -519,9 +536,7 @@
   gap: 1rem;
 }
 
-.contact-btn {
-  background: #28a745;
-  color: white;
+.view-details-btn, .contact-btn {
   padding: 0.8rem 1.5rem;
   border: none;
   border-radius: 8px;
@@ -530,6 +545,21 @@
   font-weight: 600;
   transition: all 0.3s ease;
   flex: 1;
+}
+
+.view-details-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.view-details-btn:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+.contact-btn {
+  background: #28a745;
+  color: white;
 }
 
 .contact-btn:hover {
@@ -548,6 +578,18 @@
 .no-applicants p {
   color: #666;
   font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.no-applicants ul {
+  text-align: left;
+  max-width: 400px;
+  margin: 0 auto;
+  color: #666;
+}
+
+.no-applicants li {
+  margin-bottom: 0.5rem;
 }
 
 .loading {

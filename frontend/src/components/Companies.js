@@ -44,104 +44,97 @@ const Companies = () => {
 
   if (loading) {
     return (
-      <div className="companies-page">
-        <div className="loading">Loading companies...</div>
-      </div>
+      React.createElement('div', { className: 'companies-page' },
+        React.createElement('div', { className: 'loading' }, 'Loading companies...')
+      )
     );
   }
 
   return (
-    <div className="companies-page">
-      <div className="companies-hero">
-        <h1>Partner Companies</h1>
-        <p>Connect with leading employers in Lesotho and discover career opportunities</p>
-      </div>
+    React.createElement('div', { className: 'companies-page' },
+      React.createElement('div', { className: 'companies-hero' },
+        React.createElement('h1', null, 'Partner Companies'),
+        React.createElement('p', null, 'Connect with leading employers in Lesotho and discover career opportunities')
+      ),
 
-      <div className="companies-content">
-        <div className="companies-filters">
-          <div className="search-box">
-            <input
-              type="text"
-              placeholder="Search companies..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="filter-box">
-            <select
-              value={filterIndustry}
-              onChange={(e) => setFilterIndustry(e.target.value)}
-            >
-              <option value="">All Industries</option>
-              {industries.map(industry => (
-                <option key={industry} value={industry}>{industry}</option>
-              ))}
-            </select>
-          </div>
-        </div>
+      React.createElement('div', { className: 'companies-content' },
+        React.createElement('div', { className: 'companies-filters' },
+          React.createElement('div', { className: 'search-box' },
+            React.createElement('input', {
+              type: 'text',
+              placeholder: 'Search companies...',
+              value: searchTerm,
+              onChange: (e) => setSearchTerm(e.target.value)
+            })
+          ),
+          React.createElement('div', { className: 'filter-box' },
+            React.createElement('select', {
+              value: filterIndustry,
+              onChange: (e) => setFilterIndustry(e.target.value)
+            },
+              React.createElement('option', { value: '' }, 'All Industries'),
+              industries.map(industry => 
+                React.createElement('option', { key: industry, value: industry }, industry)
+              )
+            )
+          )
+        ),
 
-        <div className="companies-stats">
-          <div className="stat-item">
-            <h3>{featuredCompanies.length}</h3>
-            <p>Partner Companies</p>
-          </div>
-          <div className="stat-item">
-            <h3>{industries.length}</h3>
-            <p>Industries</p>
-          </div>
-          <div className="stat-item">
-            <h3>50+</h3>
-            <p>Job Opportunities</p>
-          </div>
-        </div>
+        React.createElement('div', { className: 'companies-stats' },
+          React.createElement('div', { className: 'stat-item' },
+            React.createElement('h3', null, featuredCompanies.length),
+            React.createElement('p', null, 'Partner Companies')
+          ),
+          React.createElement('div', { className: 'stat-item' },
+            React.createElement('h3', null, industries.length),
+            React.createElement('p', null, 'Industries')
+          )
+        ),
 
-        <div className="companies-grid">
-          {filteredCompanies.length === 0 ? (
-            <div className="no-companies">
-              <p>No companies found matching your criteria.</p>
-              {featuredCompanies.length === 0 && (
-                <button className="register-company-btn" onClick={handleRegisterCompany}>
-                  Register Your Company
-                </button>
-              )}
-            </div>
-          ) : (
-            filteredCompanies.map(company => (
-              <div key={company.id} className="company-card">
-                <div className="company-logo">
-                  {company.companyName ? company.companyName.charAt(0).toUpperCase() : 'C'}
-                </div>
-                <div className="company-info">
-                  <h3>{company.companyName || 'Company Name'}</h3>
-                  <p className="company-industry">{company.industry || 'Industry not specified'}</p>
-                  <p className="company-description">
-                    {company.description || 'No description available.'}
-                  </p>
-                  <div className="company-details">
-                    <span className="location">Location: {company.location || 'Not specified'}</span>
-                    <span className="jobs">Open Positions: {company.jobs || 'Coming soon'}</span>
-                  </div>
-                </div>
-                <button 
-                  className="view-jobs-btn"
-                  onClick={() => handleViewOpportunities(company.companyName)}
-                >
-                  View Opportunities
-                </button>
-              </div>
-            ))
-          )}
-        </div>
+        React.createElement('div', { className: 'companies-grid' },
+          filteredCompanies.length === 0 ? 
+            React.createElement('div', { className: 'no-companies' },
+              React.createElement('p', null, 'No companies found matching your criteria.'),
+              featuredCompanies.length === 0 && 
+                React.createElement('button', { 
+                  className: 'register-company-btn', 
+                  onClick: handleRegisterCompany 
+                }, 'Register Your Company')
+            ) :
+            filteredCompanies.map(company => 
+              React.createElement('div', { key: company.id, className: 'company-card' },
+                React.createElement('div', { className: 'company-logo' },
+                  company.companyName ? company.companyName.charAt(0).toUpperCase() : 'C'
+                ),
+                React.createElement('div', { className: 'company-info' },
+                  React.createElement('h3', null, company.companyName || 'Company Name'),
+                  React.createElement('p', { className: 'company-industry' }, company.industry || 'Industry not specified'),
+                  React.createElement('p', { className: 'company-description' },
+                    company.description || 'No description available.'
+                  ),
+                  React.createElement('div', { className: 'company-details' },
+                    React.createElement('span', { className: 'location' }, 'Location: ' + (company.location || 'Not specified')),
+                    React.createElement('span', { className: 'jobs' }, 'Open Positions: ' + (company.jobs || 'Coming soon'))
+                  )
+                ),
+                React.createElement('button', {
+                  className: 'view-jobs-btn',
+                  onClick: () => handleViewOpportunities(company.companyName)
+                }, 'View Opportunities')
+              )
+            )
+        ),
 
-        <div className="companies-cta">
-          <h2>Want to list your company?</h2>
-          <p>Join our network of partner companies and connect with qualified candidates</p>
-          <button className="cta-button" onClick={handleRegisterCompany}>
-            Register Your Company
-          </button>
-        </div>
-      </div>
-    </div>
+        React.createElement('div', { className: 'companies-cta' },
+          React.createElement('h2', null, 'Want to list your company?'),
+          React.createElement('p', null, 'Join our network of partner companies and connect with qualified candidates'),
+          React.createElement('button', { 
+            className: 'cta-button', 
+            onClick: handleRegisterCompany 
+          }, 'Register Your Company')
+        )
+      )
+    )
   );
 };
 
